@@ -37,4 +37,3 @@ jobs:
     - name: Elevated pytest
       run: |
         paexec -u foo -p p@ssw0rd pytest
-        cat output.txt
