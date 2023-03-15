@@ -1,10 +1,9 @@
-# template-python-cmd
-A template for quickly making a python lib that has a command line program attached
+# sudo-win32
+
+This missing sudo command for win32.
 
 [![Linting](../../actions/workflows/lint.yml/badge.svg)](../../actions/workflows/lint.yml)
 
-[![MacOS_Tests](../../actions/workflows/push_macos.yml/badge.svg)](../../actions/workflows/push_macos.yml)
-[![Ubuntu_Tests](../../actions/workflows/push_ubuntu.yml/badge.svg)](../../actions/workflows/push_ubuntu.yml)
 [![Win_Tests](../../actions/workflows/push_win.yml/badge.svg)](../../actions/workflows/push_win.yml)
 
 # Usage
@@ -47,4 +46,5 @@ Run `./lint.sh` to find linting errors using `pylint`, `flake8` and `mypy`.
 
 # Release Notes
 
+  * 1.0.1 - Fixing the readme
   * 1.0.0 - Initial release
