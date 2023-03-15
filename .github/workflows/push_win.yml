@@ -36,5 +36,5 @@ jobs:
         net user foo p@ssw0rd /add
     - name: Elevated pytest
       run: |
-        paexec -u foo -p p@ssw0rd "pytest tests" -lo output.txt
+        paexec -u foo -p p@ssw0rd -lo output.txt pytest tests
         cat output.txt
