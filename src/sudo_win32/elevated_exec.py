@@ -59,7 +59,7 @@ def elevated_exec(cmd: str) -> int:
         admin_cmd = f"""
         @echo off
         {cmd}
-        runas /trustlevel:0x20000 "{write_bat_file}"
+        runas /trustlevel:0x20000 "{write_bat_file}" %ERRORLEVEL%
         """
 
         entrypoint_ps1 = f"""

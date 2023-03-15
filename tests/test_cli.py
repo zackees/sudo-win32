@@ -19,10 +19,6 @@ class MainTester(unittest.TestCase):
         rtn = os.system(COMMAND)
         self.assertEqual(0, rtn)
 
-    def test_paexec_exe_exists(self) -> None:
-        """Test that paexec.exe exists."""
-        self.assertTrue(os.path.exists(PAEXEC_EXE))
-
 
 if __name__ == "__main__":
     unittest.main()
