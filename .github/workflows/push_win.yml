@@ -9,7 +9,6 @@ jobs:
       matrix:
         python-version: [3.10.4]
         os: [windows-latest]
-        runas: [administrator]
     steps:
     - uses: actions/checkout@v3
     - name: Set up Python ${{ matrix.python-version }}
@@ -37,5 +36,5 @@ jobs:
         net user foo p@ssw0rd /add
     - name: Elevated pytest
       run: |
-        paexec -u foo -p p@ssw0rd -lo $pwd\output.txt -w $pwd $pwd\pytest tests -l $pwd\mvntest.txt 
+        paexec -u foo -p p@ssw0rd -lo $pwd\output.txt -w $pwd $pwd\pytest -l $pwd\mvntest.txt 
         cat output.txt
