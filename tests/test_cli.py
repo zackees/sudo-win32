@@ -4,7 +4,7 @@ Unit test file.
 import os
 import unittest
 
-COMMAND = "sudo_win32"
+COMMAND = "sudo_win32 echo HI"
 
 
 class MainTester(unittest.TestCase):
