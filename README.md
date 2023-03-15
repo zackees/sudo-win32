@@ -19,9 +19,14 @@ If this package solves a problem in your life then you are obligated to give thi
 a star. If you don't, then you are a bad person.
 
 Note that as this release:
-  1. the command always return 0 indicating success, regardless of
+  * If NOT in admin mode:
+    1. the command always return 0 indicating success, regardless of
 the actual exit code of the command.
-  2. The output of the command is not captured.
+    2. The output of the command is not captured.
+  * Else if in admin mode:
+    1. The command is executed as admin.
+    2. The exit code is returned.
+    3. The output of the command is captured.
 
 # How this works
 
