@@ -35,8 +35,7 @@ jobs:
     - name: Create new user
       run: |
         net user foo p@ssw0rd /add
-    - name: Test with Maven
+    - name: Elevated pytest
       run: |
         paexec -u foo -p p@ssw0rd -lo $pwd\output.txt -w $pwd $pwd\pytest tests -l $pwd\mvntest.txt 
         cat output.txt
-        cat mvntest.txt
