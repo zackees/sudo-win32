@@ -3,12 +3,11 @@
 This missing sudo command for win32.
 
 [![Linting](../../actions/workflows/lint.yml/badge.svg)](../../actions/workflows/lint.yml)
-
 [![Win_Tests](../../actions/workflows/push_win.yml/badge.svg)](../../actions/workflows/push_win.yml)
 
 # Usage
 
-```python
+```bash
 pip install sudo_win32
 sudo_win32 taskkill /F /im wslservice.exe
 ```
@@ -19,8 +18,10 @@ will be concatenated using subprocess.list2cmdline.
 If this package solves a problem in your life then you are obligated to give this repo
 a star. If you don't, then you are a bad person.
 
-Note that as this release the command always return 0 indicating success, regardless of
-the actual exit code of the command. Fixing this is none trivial.
+Note that as this release:
+  1. the command always return 0 indicating success, regardless of
+the actual exit code of the command.
+  2. The output of the command is not captured.
 
 # How this works
 

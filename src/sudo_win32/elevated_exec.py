@@ -9,6 +9,7 @@ and powershell:
 3. The calling python waits until the "done" file appears then exits.
 """
 
+import ctypes
 import os
 import time
 from tempfile import TemporaryDirectory
@@ -20,8 +21,19 @@ def write_utf8(path: str, content: str) -> None:
         f.write(content)
 
 
-def elevated_exec(cmd: str) -> None:
+def is_admin():
+    try:
+        return ctypes.windll.shell32.IsUserAnAdmin()
+    except:
+        return False
+
+
+def elevated_exec(cmd: str) -> int:
     """Execute a command as admin."""
+
+    if is_admin():
+        # Already admin, just execute the command.
+        return os.system(cmd)
 
     with TemporaryDirectory(ignore_cleanup_errors=True) as tmpdir:
 
@@ -63,3 +75,4 @@ def elevated_exec(cmd: str) -> None:
         # time.sleep(20)
         while not os.path.exists(write_bat_file):
             time.sleep(0.1)
+    return 0
