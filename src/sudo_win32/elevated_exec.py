@@ -9,24 +9,16 @@ and powershell:
 3. The calling python waits until the "done" file appears then exits.
 """
 
-import ctypes
 import os
 import time
 from tempfile import TemporaryDirectory
 
+from sudo_win32.util import is_admin
 
 def write_utf8(path: str, content: str) -> None:
     """Write a file with utf-8 encoding."""
     with open(path, encoding="utf-8", mode="w") as f:
         f.write(content)
-
-
-def is_admin() -> bool:
-    """Returns true if admin"""
-    try:
-        return bool(ctypes.windll.shell32.IsUserAnAdmin())  # flake8: noqa
-    except Exception:  # pylint: disable=broad-except
-        return False
 
 
 def elevated_exec(cmd: str) -> int:
