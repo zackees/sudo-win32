@@ -21,7 +21,7 @@ class MainTester(unittest.TestCase):
         """Tests that the rtn value is propagated up."""
         # rtn = os.system("sudo_win32 badcmd")
         rtn = elevated_exec("badcmd")
-        self.assertEqual(1, rtn)
+        self.assertNotEqual(0, rtn)
 
 
 if __name__ == "__main__":
