@@ -4,6 +4,7 @@ Main entry point.
 
 import argparse
 import subprocess
+import sys
 
 from .elevated_exec import elevated_exec
 
@@ -15,4 +16,4 @@ def main() -> int:
     args = parser.parse_args()
     cmd = subprocess.list2cmdline(args.cmd_parts)
     elevated_exec(cmd)
-    return 0
+    sys.exit(0)

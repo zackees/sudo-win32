@@ -19,6 +19,9 @@ will be concatenated using subprocess.list2cmdline.
 If this package solves a problem in your life then you are obligated to give this repo
 a star. If you don't, then you are a bad person.
 
+Note that as this release the command always return 0 indicating success, regardless of
+the actual exit code of the command. Fixing this is none trivial.
+
 # How this works
 
 I discovered this solution while at Google and did a proper implementation of it.
