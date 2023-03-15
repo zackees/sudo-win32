@@ -4,6 +4,8 @@ Unit test file.
 import os
 import unittest
 
+from sudo_win32.elevated_exec import elevated_exec
+
 COMMAND = "sudo_win32 echo HI"
 
 
@@ -18,7 +20,6 @@ class MainTester(unittest.TestCase):
     def test_bad(self) -> None:
         """Tests that the rtn value is propagated up."""
         # rtn = os.system("sudo_win32 badcmd")
-        from sudo_win32.elevated_exec import elevated_exec
         rtn = elevated_exec("badcmd")
         self.assertEqual(1, rtn)
 

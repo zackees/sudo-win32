@@ -3,7 +3,6 @@
 This missing sudo command for win32.
 
 [![Linting](../../actions/workflows/lint.yml/badge.svg)](../../actions/workflows/lint.yml)
-[![Win_Tests](../../actions/workflows/push_win.yml/badge.svg)](../../actions/workflows/push_win.yml)
 
 # Usage
 
@@ -18,15 +17,7 @@ will be concatenated using subprocess.list2cmdline.
 If this package solves a problem in your life then you are obligated to give this repo
 a star. If you don't, then you are a bad person.
 
-Note that as this release:
-  * If NOT in admin mode:
-    1. the command always return 0 indicating success, regardless of
-the actual exit code of the command.
-    2. The output of the command is not captured.
-  * Else if in admin mode:
-    1. The command is executed as admin.
-    2. The exit code is returned.
-    3. The output of the command is captured.
+In this releae the stdout and stderr are not returned when elevating privledges.
 
 # How this works
 
@@ -54,6 +45,6 @@ This environment requires you to use `git-bash`.
 Run `./lint.sh` to find linting errors using `pylint`, `flake8` and `mypy`.
 
 # Release Notes
-
+  * 1.0.2 - The return value of the command is now returned when elevating privledges.
   * 1.0.1 - Fixing the readme
   * 1.0.0 - Initial release
