@@ -28,6 +28,15 @@ jobs:
         python -m pip install --upgrade pip
         python -m pip install .
         python -m pip install pytest
-    - name: Run Test
+    - name: Download PaExec
       run: |
-        runAs /user:Administrator "pytest tests"
+        choco install wget --no-progress 
+        wget -q https://www.poweradmin.com/paexec/paexec.exe -P C:\Windows\System32
+    - name: Create new user
+      run: |
+        net user foo p@ssw0rd /add
+    - name: Test with Maven
+      run: |
+        paexec -u foo -p p@ssw0rd -lo $pwd\output.txt -w $pwd $pwd\pytest tests -l $pwd\mvntest.txt 
+        cat output.txt
+        cat mvntest.txt
