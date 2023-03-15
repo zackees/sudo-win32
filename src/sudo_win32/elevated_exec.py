@@ -24,7 +24,7 @@ def write_utf8(path: str, content: str) -> None:
 def is_admin() -> bool:
     """Returns true if admin"""
     try:
-        return bool(ctypes.windll.shell32.IsUserAnAdmin())
+        return bool(ctypes.windll.shell32.IsUserAnAdmin())  # flake8: noqa
     except Exception:  # pylint: disable=broad-except
         return False
 
