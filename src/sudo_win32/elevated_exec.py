@@ -29,6 +29,12 @@ def write_utf8(path: str, content: str) -> None:
         f.write(content)
 
 
+def read_utf8(path: str) -> str:
+    """Read a file with utf-8 encoding."""
+    with open(path, encoding="utf-8", mode="r") as f:
+        return f.read()
+
+
 def elevated_exec(cmd: str) -> int:
     """Execute a command as admin."""
 
@@ -39,19 +45,23 @@ def elevated_exec(cmd: str) -> int:
     with TemporaryDirectory(ignore_cleanup_errors=True) as tmpdir:
 
         def get_path(file: str) -> str:
-            os.makedirs(tmpdir, exist_ok=True)
             path = os.path.join(tmpdir, file)
             out = os.path.abspath(path)
             return out
 
-        write_bat_file = get_path("write.bat")
+        write_py_file = get_path("write.py")
         run_bat_file = get_path("myrun.bat")
         ps1_file = get_path("run.ps1")
         done_txt = get_path("done.txt")
 
-        write_cmd = f"""
-        @echo off
-        echo done > "{done_txt}"
+        write_py = """
+import os
+import sys
+with open('rtn.txt', mode='r', encoding='utf-8') as fd:
+    rtn_val = fd.read()
+with open('tmp.txt', mode='w', encoding='utf-8') as fd:
+    fd.write(str(rtn_val))
+os.rename('tmp.txt', 'done.txt')
         """
 
         # First execute the service as admin.
@@ -59,14 +69,17 @@ def elevated_exec(cmd: str) -> int:
         admin_cmd = f"""
         @echo off
         {cmd}
-        runas /trustlevel:0x20000 "{write_bat_file}" %ERRORLEVEL%
+        set lasterr=%ERRORLEVEL%
+        cd %~dp0
+        echo %lasterr% > rtn.txt
+        runas /trustlevel:0x20000 "python write.py"
         """
 
         entrypoint_ps1 = f"""
         Start-Process -WindowStyle Hidden -Verb runAs "{run_bat_file}"
         """
 
-        write_utf8(write_bat_file, write_cmd)
+        write_utf8(write_py_file, write_py)
         write_utf8(run_bat_file, admin_cmd)
         write_utf8(ps1_file, entrypoint_ps1)
 
@@ -74,6 +87,18 @@ def elevated_exec(cmd: str) -> int:
         # print(cmd)
         os.system(cmd)
         # time.sleep(20)
-        while not os.path.exists(write_bat_file):
+        while not os.path.exists(done_txt):
             time.sleep(0.1)
-    return 0
+        rtn_str = read_utf8(done_txt).strip()
+        rtn = int(rtn_str)
+        return rtn
+
+
+def unit_test() -> None:
+    """Unit test."""
+    rtn = elevated_exec("echo hi")
+    assert rtn == 0
+
+
+if __name__ == "__main__":
+    unit_test()

@@ -6,10 +6,6 @@ import unittest
 
 COMMAND = "sudo_win32 echo HI"
 
-HERE = os.path.abspath(os.path.dirname(__file__))
-PROJECT_ROOT = os.path.abspath(os.path.join(HERE, ".."))
-PAEXEC_EXE = os.path.join(PROJECT_ROOT, "src", "sudo_win32", "paexec.exe")
-
 
 class MainTester(unittest.TestCase):
     """Main tester class."""
@@ -18,6 +14,13 @@ class MainTester(unittest.TestCase):
         """Test command line interface (CLI)."""
         rtn = os.system(COMMAND)
         self.assertEqual(0, rtn)
+
+    def test_bad(self) -> None:
+        """Tests that the rtn value is propagated up."""
+        # rtn = os.system("sudo_win32 badcmd")
+        from sudo_win32.elevated_exec import elevated_exec
+        rtn = elevated_exec("badcmd")
+        self.assertEqual(1, rtn)
 
 
 if __name__ == "__main__":

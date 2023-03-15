@@ -15,5 +15,5 @@ def main() -> int:
     parser.add_argument("cmd_parts", help="Command to execute as admin.", nargs="+")
     args = parser.parse_args()
     cmd = subprocess.list2cmdline(args.cmd_parts)
-    elevated_exec(cmd)
-    sys.exit(0)
+    rtn = elevated_exec(cmd)
+    sys.exit(rtn)
