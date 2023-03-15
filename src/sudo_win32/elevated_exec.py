@@ -67,16 +67,16 @@ os.rename('tmp.txt', 'done.txt')
         # First execute the service as admin.
         # Then execute write.bat as a normal user, "done.txt" will appear.
         admin_cmd = f"""
-        @echo off
-        {cmd}
-        set lasterr=%ERRORLEVEL%
-        cd %~dp0
-        echo %lasterr% > rtn.txt
-        runas /trustlevel:0x20000 "python write.py"
+@echo off
+{cmd}
+set lasterr=%ERRORLEVEL%
+cd %~dp0
+echo %lasterr% > rtn.txt
+runas /trustlevel:0x20000 "python write.py"
         """
 
         entrypoint_ps1 = f"""
-        Start-Process -WindowStyle Hidden -Verb runAs "{run_bat_file}"
+Start-Process -WindowStyle Hidden -Verb runAs "{run_bat_file}"
         """
 
         write_utf8(write_py_file, write_py)
