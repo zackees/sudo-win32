@@ -1,21 +1,48 @@
+function Test-CredentialExpiration {
+    param (
+        [Parameter(Mandatory = $true)]
+        [hashtable]$CredentialWithTimestamp,
+
+        [Parameter(Mandatory = $true)]
+        [TimeSpan]$ExpirationTime
+    )
+
+    $Credential = $CredentialWithTimestamp.Credential
+    $CurrentTime = Get-Date
+    $CredentialAge = $CurrentTime - $CredentialWithTimestamp.Timestamp
+
+    if ($CredentialAge -gt $ExpirationTime) {
+        Write-Host "Credential has expired."
+        return $false
+    } else {
+        return $true
+    }
+}
 
 function Check-Credentials {
     param (
         [string]$CredentialPath = ".\credentials.xml",
-        [string]$InUserName = $env:USERNAME
+        [string]$InUserName = $env:USERNAME,
+        [TimeSpan]$ExpirationTime = (New-TimeSpan -Minutes 15)
     )
 
     $newCredentials = $false
 
     try {
-        $cred = Import-Clixml -Path $CredentialPath
+        $credWithTimestamp = Import-Clixml -Path $CredentialPath
+        if (-not (Test-CredentialExpiration -CredentialWithTimestamp $credWithTimestamp -ExpirationTime $ExpirationTime)) {
+            throw "Credential has expired."
+        }
     } catch {
-        Write-Host "No credentials were entered."
         $cred = Get-Credential -Credential $InUserName
-        $cred = Import-Clixml -Path $CredentialPath
+        $credWithTimestamp = @{
+            Credential = $cred
+            Timestamp = Get-Date
+        }
+        $credWithTimestamp | Export-Clixml -Path $CredentialPath
     }
 
-    $Credential = Import-Clixml -Path $CredentialPath
+    $Credential = $credWithTimestamp.Credential
     $Username = $Credential.UserName
     $Password = $Credential.GetNetworkCredential().Password
 
@@ -30,7 +57,7 @@ function Check-Credentials {
 
     if ($IsValid) {
         if ($newCredentials) {
-            $cred | Export-Clixml -Path $CredentialPath
+            $credWithTimestamp | Export-Clixml -Path $CredentialPath
             Write-Host "Credentials exported to file."
         }
         return $Credential
@@ -39,9 +66,11 @@ function Check-Credentials {
     }
 }
 
-$ValidCredential = Check-Credentials -CredentialPath ".\credentials.xml"
+$ValidCredential = Check-Credentials -CredentialPath ".\credentials.xml" -ExpirationTime (New-TimeSpan -Minutes 1)
 if ($ValidCredential) {
     Write-Host "Valid credential found."
+    exit 0
 } else {
     Write-Host "No valid credential found."
+    exit 1
 }

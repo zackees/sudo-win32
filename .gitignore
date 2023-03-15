@@ -134,4 +134,5 @@ dmypy.json
 # Pyre type checker
 .pyre/
 .activate.sh
-.DS_Store
+**/.DS_Store
+work_in_progress/*.xml
