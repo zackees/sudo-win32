@@ -27,6 +27,7 @@ This environment requires you to use `git-bash`.
 Run `./lint.sh` to find linting errors using `pylint`, `flake8` and `mypy`.
 
 # Release Notes
+  * 1.0.6 - Switch the implementation to `gsudo`, which is excellent and does everything this lib needs.
   * 1.0.5 - sudo-win32[sudo] now works correctly, before it was unconditionally installing.
   * 1.0.3 - The stdout/stderr are now correct re-routed back.
   * 1.0.2 - The return value of the command is now returned when elevating privledges.
