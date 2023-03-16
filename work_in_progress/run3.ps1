@@ -74,105 +74,12 @@ if ($ValidCredential) {
     exit 1
 }
 
-
-# Get user input
-# $Command = Read-Host "Enter Command"
-
-$Command = "python gen.py"
-
+# Everything becomes easier when using a batch file to run the command.
+$Command = "run.bat"
 $CurrDirectory = Get-Location
 
-# Create named pipes for stdout and stderr
-$pipeNameOut = [System.Guid]::NewGuid().ToString()
-$pipeNameErr = [System.Guid]::NewGuid().ToString()
-$pipeServerOut = New-Object System.IO.Pipes.NamedPipeServerStream($pipeNameOut, [System.IO.Pipes.PipeDirection]::InOut, 1, [System.IO.Pipes.PipeTransmissionMode]::Byte, [System.IO.Pipes.PipeOptions]::Asynchronous)
-$pipeServerErr = New-Object System.IO.Pipes.NamedPipeServerStream($pipeNameErr, [System.IO.Pipes.PipeDirection]::InOut, 1, [System.IO.Pipes.PipeTransmissionMode]::Byte, [System.IO.Pipes.PipeOptions]::Asynchronous)
-
-# Define the script block to run the command and stream the output through the named pipes
-$ScriptBlock = {
-    param($Command, $pipeNameOut, $pipeNameErr, $CurrDirectory)
-
-    $pipeClientOut = New-Object System.IO.Pipes.NamedPipeClientStream(".", $pipeNameOut, [System.IO.Pipes.PipeDirection]::InOut, [System.IO.Pipes.PipeOptions]::None)
-    $pipeClientErr = New-Object System.IO.Pipes.NamedPipeClientStream(".", $pipeNameErr, [System.IO.Pipes.PipeDirection]::InOut, [System.IO.Pipes.PipeOptions]::None)
-
-    $pipeClientOut.Connect()
-    $pipeClientErr.Connect()
-
-    $writerOut = New-Object System.IO.StreamWriter($pipeClientOut)
-    $writerErr = New-Object System.IO.StreamWriter($pipeClientErr)
-
-    $originalOut = [Console]::Out
-    $originalErr = [Console]::Error
-
-    [Console]::SetOut($writerOut)
-    [Console]::SetError($writerErr)
-
-    Set-Location $CurrDirectory
-
-    $exitCode = 0
-    try {
-        Invoke-Expression $Command
-    } catch {
-        $exitCode = 1
-    }
-
-
-    [Console]::SetOut($originalOut)
-    [Console]::SetError($originalErr)
-
-    $writerOut.Dispose()
-    $writerErr.Dispose()
-
-    $pipeClientOut.Dispose()
-    $pipeClientErr.Dispose()
-    return $exitCode
-}
-
-
-# Run the command using Start-Job with the specified credential
-$Job = Start-Job -ScriptBlock $ScriptBlock -Credential $ValidCredential -ArgumentList $Command, $pipeNameOut, $pipeNameErr, $CurrDirectory
-
-# Connect to the named pipes and display the output in real-time
-$pipeServerOut.WaitForConnection()
-$pipeServerErr.WaitForConnection()
-
-$readerOut = New-Object System.IO.StreamReader($pipeServerOut)
-$readerErr = New-Object System.IO.StreamReader($pipeServerErr)
-
-do {
-    if ($pipeServerOut.IsConnected) {
-        $stdout = $readerOut.ReadLine()
-        if ($stdout) { Write-Output $stdout }
-    }
-
-    if ($pipeServerErr.IsConnected) {
-        $stderr = $readerErr.ReadLine()
-        if ($stderr) { Write-Error $stderr }
-    }
-
-    Start-Sleep -Milliseconds 100
-} while ($Job.State -eq 'Running')
-
-
-
-$stdout = $readerOut.ReadLine()
-if ($stdout) { Write-Output $stdout }
-
-$stderr = $readerErr.ReadLine()
-if ($stderr) { Write-Error $stderr }
-
-# Get any remaining output from the job
-$jobOutput = Receive-Job $Job
-$exitCode = $jobOutput[-1]
-
+# Create a job to run the command
+$process = Start-Process -FilePath "run.bat" -PassThru -Wait -WorkingDirectory $CurrDirectory -NoNewWindow
+$exitCode = $process.ExitCode
 # Print the exit code
 Write-Host "Exit code: $exitCode"
-# Write-Host "FInished job: $Job"
-# Write-Host "Job state: $Job"
-
-# Clean up resources
-Remove-Job $Job
-$readerOut.Dispose()
-$readerErr.Dispose()
-$pipeServerOut.Dispose()
-$pipeServerErr.Dispose()
