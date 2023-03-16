@@ -39,6 +39,8 @@ def read_ascii(path: str) -> str:
 
 def elevated_exec(cmd: str) -> int:
     """Execute a command as admin."""
+    # Note: It's assumed that input `cmd` has been sanitized by the caller via
+    # subprocess.list2cmdline(cmd_parts) or similar.
 
     if is_admin():
         # Already admin, just execute the command.
