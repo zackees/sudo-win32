@@ -78,6 +78,8 @@ if ($ValidCredential) {
 # Get user input
 $Command = Read-Host "Enter Command"
 
+$CurrDirectory = Get-Location
+
 # Create named pipes for stdout and stderr
 $pipeNameOut = [System.Guid]::NewGuid().ToString()
 $pipeNameErr = [System.Guid]::NewGuid().ToString()
@@ -86,7 +88,7 @@ $pipeServerErr = New-Object System.IO.Pipes.NamedPipeServerStream($pipeNameErr, 
 
 # Define the script block to run the command and stream the output through the named pipes
 $ScriptBlock = {
-    param($Command, $pipeNameOut, $pipeNameErr)
+    param($Command, $pipeNameOut, $pipeNameErr, $CurrDirectory)
 
     $pipeClientOut = New-Object System.IO.Pipes.NamedPipeClientStream(".", $pipeNameOut, [System.IO.Pipes.PipeDirection]::InOut, [System.IO.Pipes.PipeOptions]::None)
     $pipeClientErr = New-Object System.IO.Pipes.NamedPipeClientStream(".", $pipeNameErr, [System.IO.Pipes.PipeDirection]::InOut, [System.IO.Pipes.PipeOptions]::None)
@@ -103,7 +105,15 @@ $ScriptBlock = {
     [Console]::SetOut($writerOut)
     [Console]::SetError($writerErr)
 
-    Invoke-Expression $Command
+    Set-Location $CurrDirectory
+
+    $exitCode = 0
+    try {
+        Invoke-Expression $Command
+    } catch {
+        $exitCode = 1
+    }
+
 
     [Console]::SetOut($originalOut)
     [Console]::SetError($originalErr)
@@ -113,11 +123,12 @@ $ScriptBlock = {
 
     $pipeClientOut.Dispose()
     $pipeClientErr.Dispose()
+    return $exitCode
 }
 
 
 # Run the command using Start-Job with the specified credential
-$Job = Start-Job -ScriptBlock $ScriptBlock -Credential $ValidCredential -ArgumentList $Command, $pipeNameOut, $pipeNameErr
+$Job = Start-Job -ScriptBlock $ScriptBlock -Credential $ValidCredential -ArgumentList $Command, $pipeNameOut, $pipeNameErr, $CurrDirectory
 
 # Connect to the named pipes and display the output in real-time
 $pipeServerOut.WaitForConnection()
@@ -141,7 +152,11 @@ do {
 } while ($Job.State -eq 'Running')
 
 # Get any remaining output from the job
-Receive-Job $Job
+$jobOutput = Receive-Job $Job
+$exitCode = $jobOutput[-1]
+
+# Print the exit code
+Write-Host "Exit code: $exitCode"
 
 # Clean up resources
 Remove-Job $Job
