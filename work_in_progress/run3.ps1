@@ -76,7 +76,9 @@ if ($ValidCredential) {
 
 
 # Get user input
-$Command = Read-Host "Enter Command"
+# $Command = Read-Host "Enter Command"
+
+$Command = "python gen.py"
 
 $CurrDirectory = Get-Location
 
@@ -139,17 +141,25 @@ $readerErr = New-Object System.IO.StreamReader($pipeServerErr)
 
 do {
     if ($pipeServerOut.IsConnected) {
-        $stdout = $readerOut.ReadToEnd()
+        $stdout = $readerOut.ReadLine()
         if ($stdout) { Write-Output $stdout }
     }
 
     if ($pipeServerErr.IsConnected) {
-        $stderr = $readerErr.ReadToEnd()
+        $stderr = $readerErr.ReadLine()
         if ($stderr) { Write-Error $stderr }
     }
 
     Start-Sleep -Milliseconds 100
 } while ($Job.State -eq 'Running')
+
+
+
+$stdout = $readerOut.ReadLine()
+if ($stdout) { Write-Output $stdout }
+
+$stderr = $readerErr.ReadLine()
+if ($stderr) { Write-Error $stderr }
 
 # Get any remaining output from the job
 $jobOutput = Receive-Job $Job
@@ -157,6 +167,8 @@ $exitCode = $jobOutput[-1]
 
 # Print the exit code
 Write-Host "Exit code: $exitCode"
+# Write-Host "FInished job: $Job"
+# Write-Host "Job state: $Job"
 
 # Clean up resources
 Remove-Job $Job
