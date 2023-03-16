@@ -8,13 +8,6 @@ import unittest
 from sudo_win32.elevated_exec import elevated_exec
 from sudo_win32.install import install_once
 
-COMMAND_LIST = ["sudo_win32", "echo", "HI"]
-
-IS_TESTING = os.environ.get("GITHUB_ACTIONS", False) == "true"
-if IS_TESTING:
-    os.environ["TESTING_MODE"] = "1"
-
-
 class MainTester(unittest.TestCase):
     """Main tester class."""
 
@@ -25,14 +18,12 @@ class MainTester(unittest.TestCase):
 
     def test_cli(self) -> None:
         """Test command line interface (CLI)."""
-        rtn = elevated_exec(COMMAND_LIST)
+        rtn = elevated_exec(["echo", "HI"])
         self.assertEqual(0, rtn)
 
     def test_bad(self) -> None:
         """Tests that the rtn value is propagated up."""
         cmd_list = ["badcmd"]
-        if IS_TESTING:
-            cmd_list = ["cmd.exe", "/C", "badcmd"]
         rtn = elevated_exec(cmd_list)
         self.assertNotEqual(0, rtn)
 
