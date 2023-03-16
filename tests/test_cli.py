@@ -1,12 +1,16 @@
 """
 Unit test file.
 """
+
 import os
 import unittest
 
 from sudo_win32.elevated_exec import elevated_exec
 
-COMMAND = "sudo_win32 echo HI"
+COMMAND_LIST = ["sudo_win32", "echo", "HI"]
+
+if os.environ.get("GITHUB_ACTIONS", "0") == "1":
+    os.environ["TESTING_MODE"] = "1"
 
 
 class MainTester(unittest.TestCase):
@@ -14,13 +18,13 @@ class MainTester(unittest.TestCase):
 
     def test_cli(self) -> None:
         """Test command line interface (CLI)."""
-        rtn = os.system(COMMAND)
+        rtn = elevated_exec(COMMAND_LIST)
         self.assertEqual(0, rtn)
 
     def test_bad(self) -> None:
         """Tests that the rtn value is propagated up."""
         # rtn = os.system("sudo_win32 badcmd")
-        rtn = elevated_exec("badcmd")
+        rtn = elevated_exec(["badcmd"])
         self.assertNotEqual(0, rtn)
 
 

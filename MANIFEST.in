@@ -1,3 +1,4 @@
 include pyproject.toml
 include requirements.testing.txt
 include src/sudo_win32/run.ps1
+include src/sudo_win32/gsudo.7z
