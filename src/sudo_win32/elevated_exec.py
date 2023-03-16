@@ -11,6 +11,8 @@ and powershell:
 
 import ctypes
 import os
+import shutil
+import subprocess
 import time
 from tempfile import TemporaryDirectory
 
@@ -29,9 +31,9 @@ def write_utf8(path: str, content: str) -> None:
         f.write(content)
 
 
-def read_utf8(path: str) -> str:
+def read_ascii(path: str) -> str:
     """Read a file with utf-8 encoding."""
-    with open(path, encoding="utf-8", mode="r") as f:
+    with open(path, encoding="ascii", mode="r") as f:
         return f.read()
 
 
@@ -49,47 +51,26 @@ def elevated_exec(cmd: str) -> int:
             out = os.path.abspath(path)
             return out
 
-        write_py_file = get_path("write.py")
-        run_bat_file = get_path("myrun.bat")
-        ps1_file = get_path("run.ps1")
-        done_txt = get_path("done.txt")
-
-        write_py = """
-import os
-import sys
-with open('rtn.txt', mode='r', encoding='utf-8') as fd:
-    rtn_val = fd.read()
-with open('tmp.txt', mode='w', encoding='utf-8') as fd:
-    fd.write(str(rtn_val))
-os.rename('tmp.txt', 'done.txt')
-        """
-
+        src_run_ps1 = os.path.join(os.path.dirname(__file__), "run.ps1")
+        run_bat = get_path("run.bat")
+        run_ps1 = get_path("run.ps1")
+        rtn_txt = get_path("rtn.txt")
+        # Copy the powershell script to the temp directory.
+        shutil.copyfile(src_run_ps1, run_ps1)
         # First execute the service as admin.
-        # Then execute write.bat as a normal user, "done.txt" will appear.
-        admin_cmd = f"""
+        # Then execute write.bat as a normal user, "rtn.txt" will appear.
+        run_cmd = f"""
 @echo off
+cd {os.getcwd()}
 {cmd}
-set lasterr=%ERRORLEVEL%
-cd %~dp0
-echo %lasterr% > rtn.txt
-runas /trustlevel:0x20000 "python write.py"
-        """
-
-        entrypoint_ps1 = f"""
-Start-Process -WindowStyle Hidden -Verb runAs "{run_bat_file}"
-        """
-
-        write_utf8(write_py_file, write_py)
-        write_utf8(run_bat_file, admin_cmd)
-        write_utf8(ps1_file, entrypoint_ps1)
-
-        cmd = f'powershell -c "{os.path.abspath(ps1_file)}"'
-        # print(cmd)
-        os.system(cmd)
-        # time.sleep(20)
-        while not os.path.exists(done_txt):
+"""
+        # Normalize for windows.
+        run_cmd = run_cmd.replace("\r\n", "\n")
+        write_utf8(run_bat, run_cmd)
+        subprocess.call(r"powershell -c .\run.ps1", shell=True, cwd=tmpdir)
+        while not os.path.exists(rtn_txt):
             time.sleep(0.1)
-        rtn_str = read_utf8(done_txt).strip()
+        rtn_str = read_ascii(rtn_txt).strip()
         rtn = int(rtn_str)
         return rtn
 
