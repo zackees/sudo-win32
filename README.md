@@ -7,8 +7,8 @@ This missing sudo command for win32.
 # Usage
 
 ```bash
-pip install sudo_win32[sudo]
-sudo taskkill /F /im wslservice.exe
+> pip install sudo_win32[sudo]
+> sudo taskkill /F /im wslservice.exe
 ```
 
 If you omit [sudo] then the command will just be `sudo_win32`.
