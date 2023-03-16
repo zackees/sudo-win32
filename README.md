@@ -13,9 +13,6 @@ This missing sudo command for win32.
 
 If you omit [sudo] then the command will just be `sudo_win32`.
 
-Note that the command is recommended to be a string. If this isn't done, then the command
-will be concatenated using subprocess.list2cmdline.
-
 If this package solves a problem in your life then you are obligated to give this repo
 a star. If you don't, then you are a bad person.
 
