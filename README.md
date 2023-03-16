@@ -3,6 +3,7 @@
 This missing sudo command for win32.
 
 [![Linting](../../actions/workflows/lint.yml/badge.svg)](../../actions/workflows/lint.yml)
+[![Tests](../../actions/workflows/lint.yml/badge.svg)](../../actions/workflows/Win_Tests.yml)
 
 # Usage
 
