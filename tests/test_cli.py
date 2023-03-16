@@ -8,6 +8,7 @@ import unittest
 from sudo_win32.elevated_exec import elevated_exec
 from sudo_win32.install import install_once
 
+
 class MainTester(unittest.TestCase):
     """Main tester class."""
 

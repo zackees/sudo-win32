@@ -27,8 +27,8 @@ def elevated_exec(cmd_list: list[str]) -> int:
     # add gsudo_exe to path
     os.environ["PATH"] = os.path.dirname(gsudo_exe) + os.pathsep + os.environ["PATH"]
     assert shutil.which("gsudo.exe") is not None
-    cmd_list = ["gsudo.exe"] + cmd_list
-    return subprocess.call(["gsudo.exe"] + cmd_list)
+    cmd = subprocess.list2cmdline(["gsudo.exe"] + cmd_list)
+    return os.system(cmd)
 
 
 def unit_test() -> None:
