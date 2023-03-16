@@ -83,3 +83,9 @@ $process = Start-Process -FilePath "run.bat" -PassThru -Wait -WorkingDirectory $
 $exitCode = $process.ExitCode
 # Print the exit code
 Write-Host "Exit code: $exitCode"
+
+# Write the return value to a file
+$ReturnValue = $exitCode
+$ReturnValue | Out-File -FilePath ".\return_value.txt" -Encoding UTF8 -Force
+# Now rename the file to rtn.txt
+Rename-Item -Path ".\return_value.txt" -NewName "rtn.txt" -Force
