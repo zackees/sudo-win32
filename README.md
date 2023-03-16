@@ -1,6 +1,6 @@
 # sudo-win32
 
-This missing sudo command for win32.
+This missing sudo command for win32. Thin wrapper over `gsudo`. Check out the excellent repo [here](https://github.com/gerardog/gsudo).
 
 [![Linting](../../actions/workflows/lint.yml/badge.svg)](../../actions/workflows/lint.yml)
 [![Tests](../../actions/workflows/push_win.yml/badge.svg)](../../actions/workflows/push_win.yml)
@@ -13,16 +13,6 @@ This missing sudo command for win32.
 ```
 
 If you omit [sudo] then the command will just be `sudo_win32`.
-
-If this package solves a problem in your life then you are obligated to give this repo
-a star. If you don't, then you are a bad person.
-
-In this releae the stdout and stderr are not returned when elevating privledges.
-
-# How this works
-
-I use powershell to raise permissions and then execute the command. The return value and
-stdout/stderr are returned.
 
 # Development
 
