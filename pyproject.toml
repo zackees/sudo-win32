@@ -9,12 +9,9 @@ requires-python = ">=3.7"
 keywords = ["template-python-cmd"]
 license = { text = "BSD 3-Clause License" }
 classifiers = ["Programming Language :: Python :: 3"]
-dependencies = [
-
-]
 # Change this with the version number bump.
 # Also make the change in zcmds/version.py
-version = "1.0.4"
+version = "1.0.5"
 
 [tool.pylint."MESSAGES CONTROL"]
 good-names = [
@@ -34,4 +31,3 @@ ignore_missing_imports = true
 
 [project.scripts]
 sudo_win32 = "sudo_win32.cli:main"
-sudo = "sudo_win32.cli:main [sudo]"
