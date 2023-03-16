@@ -23,7 +23,7 @@ class MainTester(unittest.TestCase):
 
     def test_bad(self) -> None:
         """Tests that the rtn value is propagated up."""
-        cmd_list = ["badcmd"]
+        cmd_list = ["cmd.exe", "/c", "badcmd"]  # fix for when in admin mode.
         rtn = elevated_exec(cmd_list)
         self.assertNotEqual(0, rtn)
 
