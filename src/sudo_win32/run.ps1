@@ -66,11 +66,12 @@ function Check-Credentials {
     }
 }
 
+
 $ValidCredential = Check-Credentials -CredentialPath ".\credentials.xml" -ExpirationTime (New-TimeSpan -Minutes 15)
 if ($ValidCredential) {
-    Write-Host "Valid credential found."
+    # Write-Host "Valid credential found."
 } else {
-    Write-Host "No valid credential found."
+    Write-Host "Error: No valid credential found."
     exit 1
 }
 
@@ -78,14 +79,15 @@ if ($ValidCredential) {
 $Command = "run.bat"
 $CurrDirectory = Get-Location
 
+
 # Create a job to run the command
 $process = Start-Process -FilePath "run.bat" -PassThru -Wait -WorkingDirectory $CurrDirectory -NoNewWindow
 $exitCode = $process.ExitCode
 # Print the exit code
-Write-Host "Exit code: $exitCode"
+#Write-Host "Exit code: $exitCode"
 
 # Write the return value to a file
 $ReturnValue = $exitCode
-$ReturnValue | Out-File -FilePath ".\return_value.txt" -Encoding UTF8 -Force
-# Now rename the file to rtn.txt
+$ReturnValue | Out-File -FilePath ".\return_value.txt" -Encoding ASCII -Force
+# Now rename the file to rtn.txt to enforce atomicity
 Rename-Item -Path ".\return_value.txt" -NewName "rtn.txt" -Force
