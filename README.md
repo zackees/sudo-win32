@@ -23,7 +23,7 @@ If you omit [sudo] then the command will just be `sudo_win32`.
 
 # Documentation
 
-This is shamelessly wripped from the `gsudo` repo and is kept as-is. Simply replace `gsudo` with
+This is shamelessly ripped from the `gsudo` repo and is kept as-is. Simply replace `gsudo` with
 `sudo_win32` or `sudo` if you installed with the [sudo] extra. Otherwise it's the same.
 
 ## Usage
