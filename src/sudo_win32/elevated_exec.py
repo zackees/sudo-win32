@@ -22,7 +22,7 @@ def elevated_exec(cmd_list: list[str]) -> int:
     """Execute a command as admin."""
     if is_admin():
         # Already admin, just execute the command.
-        return subprocess.call(cmd_list)
+        return os.system(subprocess.list2cmdline(cmd_list))
     gsudo_exe = install_once()
     # add gsudo_exe to path
     os.environ["PATH"] = os.path.dirname(gsudo_exe) + os.pathsep + os.environ["PATH"]
