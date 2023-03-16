@@ -10,7 +10,8 @@ from sudo_win32.install import install_once
 
 COMMAND_LIST = ["sudo_win32", "echo", "HI"]
 
-if os.environ.get("GITHUB_ACTIONS", "0") == "1":
+IS_TESTING = os.environ.get("GITHUB_ACTIONS", "0") == "1"
+if IS_TESTING:
     os.environ["TESTING_MODE"] = "1"
 
 
@@ -29,8 +30,10 @@ class MainTester(unittest.TestCase):
 
     def test_bad(self) -> None:
         """Tests that the rtn value is propagated up."""
-        # rtn = os.system("sudo_win32 badcmd")
-        rtn = elevated_exec(["badcmd"])
+        cmd_list = ["badcmd"]
+        if IS_TESTING:
+            cmd_list = ["cmd.exe", "/C", "badcmd"]
+        rtn = elevated_exec(cmd_list)
         self.assertNotEqual(0, rtn)
 
 
