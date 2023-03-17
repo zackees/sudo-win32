@@ -98,6 +98,7 @@ This environment requires you to use `git-bash`.
 Run `./lint.sh` to find linting errors using `pylint`, `flake8` and `mypy`.
 
 # Release Notes
+  * 1.0.9 - Allow strings or list[str] as command.
   * 1.0.8 - Fixes some commands in admin mode.
   * 1.0.7 - Use shell mode for gsudo, since it's a better experience. Commands are merged via subprocess.list2cmdline
   * 1.0.6 - Switch the implementation to `gsudo`, which is excellent and does everything this lib needs.
