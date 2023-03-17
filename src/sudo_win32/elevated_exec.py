@@ -18,16 +18,18 @@ def is_admin() -> bool:
         return False
 
 
-def elevated_exec(cmd_list: list[str]) -> int:
+def elevated_exec(cmd: list[str] | str) -> int:
     """Execute a command as admin."""
+    if isinstance(cmd, list):
+        cmd = subprocess.list2cmdline(cmd)
     if is_admin():
         # Already admin, just execute the command.
-        return os.system(subprocess.list2cmdline(cmd_list))
+        return os.system(cmd)
     gsudo_exe = install_once()
     # add gsudo_exe to path
     os.environ["PATH"] = os.path.dirname(gsudo_exe) + os.pathsep + os.environ["PATH"]
     assert shutil.which("gsudo.exe") is not None
-    cmd = subprocess.list2cmdline(["gsudo.exe"] + cmd_list)
+    cmd = "gsudo.exe " + cmd
     return os.system(cmd)
 
 
